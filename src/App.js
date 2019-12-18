@@ -1,26 +1,42 @@
 import React from 'react';
-import logo from './logo.svg';
+
+import Newtodo from './Newtodo'
+import ToDoList from './todolist'
+
 import './App.css';
 
-function App() {
+class App extends React.Component {
+  state={
+    newtodo:"",
+    todolist:[]
+  }
+  newtodo=(newtodo)=>{
+    this.setState({newtodo})
+  }
+  addnewtodo=()=>{
+    this.setState({
+      todolist:[...this.state.todolist,{todo:this.state.newtodo,isComplete:false}],
+      newtodo:""
+    })
+  }
+  removetodo=(index)=>{
+this.setState({
+  todolist:this.state.todolist.filter((el,i)=>index!==i)
+})
+  }
+  complete=(index)=>{
+    this.setState({
+    todolist:this.state.todolist.map((el,i)=>index===i? {...el,isComplete:!el.isComplete}:el)
+    })
+  }
+  render(){
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+  <Newtodo newtodo={this.newtodo} addnewtodo={this.addnewtodo} todo={this.state.newtodo}/>
+<ToDoList todolist={this.state.todolist} removetodo={this.removetodo} complete={this.complete}/>
+    
+    </>
+  )}
 }
 
 export default App;
