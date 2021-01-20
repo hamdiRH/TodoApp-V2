@@ -1,42 +1,57 @@
-import React from 'react';
+import React, { useState } from "react";
+import Newtodo from "./Newtodo";
+import ToDoList from "./todolist";
 
-import Newtodo from './Newtodo'
-import ToDoList from './todolist'
-
-import './App.css';
-
-class App extends React.Component {
-  state={
-    newtodo:"",
-    todolist:[]
-  }
-  newtodo=(newtodo)=>{
-    this.setState({newtodo})
-  }
-  addnewtodo=()=>{
-    this.setState({
-      todolist:[...this.state.todolist,{todo:this.state.newtodo,isComplete:false}],
-      newtodo:""
-    })
-  }
-  removetodo=(index)=>{
-this.setState({
-  todolist:this.state.todolist.filter((el,i)=>index!==i)
-})
-  }
-  complete=(index)=>{
-    this.setState({
-    todolist:this.state.todolist.map((el,i)=>index===i? {...el,isComplete:!el.isComplete}:el)
-    })
-  }
-  render(){
+const App = () => {
+  const [newtodo, setnewtodo] = useState("");
+  const [todolist, settodolist] = useState(
+    (localStorage.getItem("todolist") &&
+      JSON.parse(localStorage.getItem("todolist"))) ||
+      []
+  );
+  const newTodo = (newtodo) => {
+    setnewtodo(newtodo);
+  };
+  const addnewtodo = () => {
+    settodolist([...todolist, { todo: newtodo, isComplete: false }]);
+    setnewtodo("");
+    localStorage.setItem(
+      "todolist",
+      JSON.stringify([...todolist, { todo: newtodo, isComplete: false }])
+    );
+  };
+  const removetodo = (index) => {
+    settodolist(todolist.filter((el, i) => index !== i));
+    localStorage.setItem(
+      "todolist",
+      JSON.stringify(todolist.filter((el, i) => index !== i))
+    );
+  };
+  const complete = (index) => {
+    settodolist(
+      todolist.map((el, i) =>
+        index === i ? { ...el, isComplete: !el.isComplete } : el
+      )
+    );
+    localStorage.setItem(
+      "todolist",
+      JSON.stringify(
+        todolist.map((el, i) =>
+          index === i ? { ...el, isComplete: !el.isComplete } : el
+        )
+      )
+    );
+  };
   return (
     <>
-  <Newtodo newtodo={this.newtodo} addnewtodo={this.addnewtodo} todo={this.state.newtodo}/>
-<ToDoList todolist={this.state.todolist} removetodo={this.removetodo} complete={this.complete}/>
-    
+      <Newtodo newtodo={newTodo} addnewtodo={addnewtodo} todo={newtodo} />
+      <ToDoList
+        todolist={todolist}
+        removetodo={removetodo}
+        complete={complete}
+      />
     </>
-  )}
-}
+  );
+};
 
 export default App;
